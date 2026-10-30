@@ -28,7 +28,6 @@ import numpy as np
 import matplotlib.pyplot as plt
 import torch
 import torch.nn as nn
-import torchvision
 from torchvision import datasets
 from torchvision import transforms
 from torch.utils.data import DataLoader
@@ -97,7 +96,7 @@ class ResNet(nn.Module):
         self.conv1x1_128 = nn.Conv2d(in_channels=64, out_channels=128, kernel_size=1, stride=2, device=device)
 
         self.conv256_init = nn.Conv2d(in_channels=128, out_channels=256, kernel_size=3, stride=2, padding=1, device=device)
-        self.conv256 = nn.Conv2d(in_channels=256, out_channels=256, kernel_size=3, stride=2, padding=1, device=device)
+        self.conv256 = nn.Conv2d(in_channels=256, out_channels=256, kernel_size=3, stride=1, padding=1, device=device)
         self.conv1x1_256 = nn.Conv2d(in_channels=128, out_channels=256, kernel_size=1, stride=2, device=device)
 
         # Define pooling
@@ -200,58 +199,3 @@ class ResNet(nn.Module):
         return out
 
 model = ResNet(in_channels=1, out_channels=3, n_blocks=n_blocks, n_features=n_features)
-
-# ------------------------------------------------------------------------------------------------------
-# Setup training config and loop
-# ------------------------------------------------------------------------------------------------------
-criterion = nn.CrossEntropyLoss()
-optimizer = torch.optim.Adam(model.parameters(), lr=learning_rate)
-
-for epoch in range(num_epochs):
-    for i, (images, labels) in enumerate(train_loader):
-        images = images.to(device)
-        labels = labels.to(device)
-
-        # Make prediction
-        outputs = model(images)
-
-        # Loss
-        loss = criterion(outputs, labels)
-
-        # Zero gradients
-        optimizer.zero_grad()
-
-        # Compute gradients
-        loss.backward()
-
-        # Update weights
-        optimizer.step()
-
-
-        if (i+1)%100 == 0:
-            print(f"Epoch: {epoch}/{num_epochs}, loss: {loss.item()}")
-
-
-
-
-# ------------------------------------------------------------------------------------------------------
-# Setup testing config and loop
-# ------------------------------------------------------------------------------------------------------
-with torch.no_grad():
-    n_correct = 0
-    n_samples = 0
-    for i, (images, labels) in enumerate(test_loader):
-        images = images.to(device)
-        labels = labels.to(device)
-
-        # Make prediction
-        outputs = model(images)
-
-        _, predictions = torch.max(outputs, 1)
-                
-        n_samples += labels.shape[0]
-        n_correct += (predictions == labels).sum().item()
-
-    acc = 100.0 * n_correct / n_samples
-    print(f"Accuracy on test set: {acc}")
-
