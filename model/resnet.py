@@ -22,8 +22,8 @@ ResNet Theory
 
 """
 
-
 # Imports
+import yaml
 import numpy as np
 import matplotlib.pyplot as plt
 import torch
@@ -35,13 +35,14 @@ from torch.utils.data import DataLoader
 # ------------------------------------------------------------------------------------------------------
 # Hyperparams: import from config file
 # ------------------------------------------------------------------------------------------------------
-batch_size = 100
-num_epochs = 2
-learning_rate = 0.01
-# in_channels = 1
-# out_channels = 3
-n_blocks = 1
-n_features = 64
+with open("config/configuration.yaml", 'r') as config_file:
+    config = yaml.safe_load(config_file)
+
+batch_size = config['model']['hyperparameters']['batch_size']
+num_epochs = config['model']['hyperparameters']['num_epochs']
+learning_rate = config['model']['hyperparameters']['learning_rate']
+n_blocks = config['model']['hyperparameters']['n_blocks']
+n_features = config['model']['hyperparameters']['n_features']
 
 # ------------------------------------------------------------------------------------------------------
 # Define device
