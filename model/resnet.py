@@ -23,6 +23,8 @@ ResNet Theory
 """
 
 # Imports
+from pathlib import Path
+
 import yaml
 import numpy as np
 import matplotlib.pyplot as plt
@@ -35,31 +37,19 @@ from torch.utils.data import DataLoader
 # ------------------------------------------------------------------------------------------------------
 # Hyperparams: import from config file
 # ------------------------------------------------------------------------------------------------------
-with open("config/configuration.yaml", 'r') as config_file:
+project_root = Path(__file__).resolve().parents[1]
+config_path = project_root / "config" / "configuration.yaml"
+
+with config_path.open('r') as config_file:
     config = yaml.safe_load(config_file)
 
 batch_size = config['model']['hyperparameters']['batch_size']
-num_epochs = config['model']['hyperparameters']['num_epochs']
-learning_rate = config['model']['hyperparameters']['learning_rate']
-n_blocks = config['model']['hyperparameters']['n_blocks']
-n_features = config['model']['hyperparameters']['n_features']
+
 
 # ------------------------------------------------------------------------------------------------------
 # Define device
 # ------------------------------------------------------------------------------------------------------
 device = torch.device("mps" if torch.mps.is_available() else "cpu")
-
-# ------------------------------------------------------------------------------------------------------
-# Setup the data
-# ------------------------------------------------------------------------------------------------------
-train_data = datasets.MNIST(root="data", train=True, transform=transforms.ToTensor(), download=True)
-test_data = datasets.MNIST(root="data", train=False, transform=transforms.ToTensor(), download=True)
-
-# ------------------------------------------------------------------------------------------------------
-# Setup the data loader
-# ------------------------------------------------------------------------------------------------------
-train_loader = DataLoader(dataset=train_data, batch_size=batch_size, shuffle=True)
-test_loader = DataLoader(dataset=test_data, batch_size=batch_size, shuffle=False)
 
 # ------------------------------------------------------------------------------------------------------
 # Setup the model
@@ -169,9 +159,9 @@ class ResNet(nn.Module):
         out128_2 = self.conv128(out128_1)
         out128_2 = self.batchnorm128(out128_2)
         out128_2 = self.relu(out128_2)
+        out128_2 = self.conv128(out128_2)
         out128_2 = self.batchnorm128(out128_2)
         out128_2 = self.relu(out128_2)
-        out128_2 = self.conv128(out128_2)
         out128_2 = out128_2 + out128_1
 
         # 2 Blocks of 3x3 conv with 256 filters
@@ -198,5 +188,3 @@ class ResNet(nn.Module):
         out = self.fully_connected(out)
 
         return out
-
-model = ResNet(in_channels=1, out_channels=3, n_blocks=n_blocks, n_features=n_features)

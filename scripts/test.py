@@ -22,19 +22,22 @@ class TestModel():
         self.loader = loader
 
     def evaluate(self):
+        self.model.eval()
         n_correct = 0
         n_samples = 0
-        for i, (images, labels) in enumerate(self.loader):
-            images = images.to(device)
-            labels = labels.to(device)
-    
-            # Make prediction
-            outputs = self.model(images)
-    
-            _, predictions = torch.max(outputs, 1)
-                    
-            n_samples += labels.shape[0]
-            n_correct += (predictions == labels).sum().item()
+
+        with torch.no_grad():
+            for images, labels in self.loader:
+                images = images.to(device)
+                labels = labels.to(device)
+
+                # Make prediction
+                outputs = self.model(images)
+
+                _, predictions = torch.max(outputs, 1)
+
+                n_samples += labels.shape[0]
+                n_correct += (predictions == labels).sum().item()
     
         acc = 100.0 * n_correct / n_samples
         print(f"Accuracy on test set: {acc}")

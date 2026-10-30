@@ -26,9 +26,6 @@ class TrainModel():
         self.learning_rate = learning_rate
 
     def train(self):
-        criterion = nn.CrossEntropyLoss()
-        optimizer = torch.optim.Adam(self.model.parameters(), lr=self.learning_rate)
-
         for epoch in range(self.num_epochs):
             for i, (images, labels) in enumerate(self.loader):
                 images = images.to(device)
@@ -38,16 +35,16 @@ class TrainModel():
                 outputs = self.model(images)
 
                 # Loss
-                loss = criterion(outputs, labels)
+                loss = self.criterion(outputs, labels)
 
                 # Zero gradients
-                optimizer.zero_grad()
+                self.optimizer.zero_grad()
 
                 # Compute gradients
                 loss.backward()
 
                 # Update weights
-                optimizer.step()
+                self.optimizer.step()
 
 
                 if (i+1)%100 == 0:
