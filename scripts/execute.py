@@ -1,7 +1,6 @@
 # Imports
 from pathlib import Path
 import sys
-
 import yaml
 import numpy as np
 import matplotlib.pyplot as plt
@@ -41,8 +40,8 @@ def main():
     criterion = nn.CrossEntropyLoss()
     optimizer = torch.optim.Adam(model.parameters(), lr=learning_rate)
     trainer = train.TrainModel(criterion=criterion, optimizer=optimizer, num_epochs=num_epochs,
-                               loader=train_loader, model=model, learning_rate=learning_rate)
-    trainer.train()
+                               train_loader=train_loader, val_loader=val_loader, model=model, learning_rate=learning_rate)
+    trainer.train_evaluate()
 
     # Test model
     tester = test.TestModel(model=model, loader=test_loader)

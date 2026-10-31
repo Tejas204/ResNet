@@ -4,7 +4,7 @@ model:
   hyperparameters:
     batch_size: 100
     num_epochs: 2
-    learning_rate: 0.01
+    learning_rate: [0.01, 0.001, 0.0001, 0.00001]
     n_blocks: 2
     n_features: 256
 
