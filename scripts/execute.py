@@ -32,7 +32,7 @@ def main():
     learning_rate = config['model']['hyperparameters']['learning_rate']
 
     # Define dataloaders
-    train_loader, test_loader = data_loader.DataLoaders().load_data()
+    train_loader, val_loader, test_loader = data_loader.DataLoaders().load_data()
 
     # Define model
     model = resnet.ResNet(in_channels=1, out_channels=3, n_blocks=n_blocks, n_features=n_features)

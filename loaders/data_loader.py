@@ -1,11 +1,7 @@
 # Imports
 from pathlib import Path
-
 import yaml
-import numpy as np
-import matplotlib.pyplot as plt
-import torch
-import torch.nn as nn
+from torch.utils.data import random_split
 from torchvision import datasets
 from torchvision import transforms
 from torch.utils.data import DataLoader
@@ -25,13 +21,16 @@ class DataLoaders():
         # Setup the data
         # ------------------------------------------------------------------------------------------------------
         data_path = self.project_root / "data"
-        train_data = datasets.MNIST(root=data_path, train=True, transform=transforms.ToTensor(), download=True)
+        full_data = datasets.MNIST(root=data_path, train=True, transform=transforms.ToTensor(), download=True)
+        train_data, validation_data = random_split(full_data, [50000, 10000])
         test_data = datasets.MNIST(root=data_path, train=False, transform=transforms.ToTensor(), download=True)
+        
 
         # ------------------------------------------------------------------------------------------------------
         # Setup the data loader
         # ------------------------------------------------------------------------------------------------------
         train_loader = DataLoader(dataset=train_data, batch_size=self.batch_size, shuffle=True)
+        val_loader = DataLoader(dataset=validation_data, batch_size=self.batch_size, shuffle=True)
         test_loader = DataLoader(dataset=test_data, batch_size=self.batch_size, shuffle=False)
 
-        return train_loader, test_loader
+        return train_loader, val_loader, test_loader

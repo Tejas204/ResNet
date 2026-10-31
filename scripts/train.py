@@ -26,6 +26,7 @@ class TrainModel():
         self.learning_rate = learning_rate
 
     def train(self):
+        self.model.train()
         for epoch in range(self.num_epochs):
             for i, (images, labels) in enumerate(self.loader):
                 images = images.to(device)
@@ -48,4 +49,4 @@ class TrainModel():
 
 
                 if (i+1)%100 == 0:
-                    print(f"Epoch: {epoch}/{self.num_epochs}, loss: {loss.item()}")
+                    print(f"Epoch: {epoch+1}/{self.num_epochs}, loss: {loss.item()}")
